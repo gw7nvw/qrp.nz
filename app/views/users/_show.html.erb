@@ -1,0 +1,113 @@
+<div id="actionbar" class="span12">
+   <div id="crumbs">
+     <%=link_to "Home", '/' %>
+     &nbsp;--&gt;&nbsp;
+     <%=  link_to  "Users", '/users' %>
+     &nbsp;--&gt;&nbsp;
+     <b><%= @user.callsign.upcase %></b>
+   </div>
+   <div id="controls">
+       <% if current_user and (current_user.is_admin or current_user.group_admin or current_user.id == @user.id) %>
+            <%=  link_to "Edit", '/users/'+@user.callsign+'/edit', class: "btn btn-small btn-primary" %>
+       <% end %>
+       <%=  link_to "Index", "/users", class: "btn btn-small btn-primary" %>
+   </div>
+</div>
+
+
+<div id="left_panel">
+   <%=render 'layouts/left_panel'%>
+</div>
+<div id="right_panel">
+
+
+<div id="right_scroll">
+   <%= render 'flash' %>
+
+   <div class="sectiontitle" id="page_title">
+     <%= @user.callsign.upcase %><br/>
+     <br/>
+   </div>
+
+   <div class="erow" id="realname">
+      <% if @user.activated then %>
+         <i>Registered user  </i>
+         <% if @user.is_modifier then %>
+            <i> - moderator</i>
+         <% end %>
+         <% if @user.is_admin then %>
+            <i> - site adminsitrator</i>
+         <% end %>
+         <% if @user.group_admin then %>
+            <i> - group adminsitrator</i>
+         <% end %>
+      <% else %>
+        <i> Not a registered user </i>
+      <% end %>
+   </div>
+   <div class="erow" id="realname">
+      <% if(signed_in? and ((@user.id==@current_user.id) or (@current_user.is_admin or current_user.group_admin))) %>
+         <%= if @user.firstname then @user.firstname.capitalize else "" end+" "+if @user.lastname then @user.lastname.capitalize else "" end %><br/>
+      <% else %>
+         <%= if @user.firstname then @user.firstname.capitalize else "" end+" "+if @user.lastname then @user.lastname.capitalize else "" end %><br/>
+      <% end %>
+   </div>
+
+   <%     if(signed_in? and ((@user.id==@current_user.id) or (@current_user.is_admin or current_user.group_admin))) %>
+     <div class="erow" id="email">
+         Email: <%= @user.email %>
+     </div>
+   <%end%>
+     <div class="erow" id="home_qth">
+         Home QTH: <%= @user.home_qth %>
+     </div>
+
+     <div class="erow" id="membership_requested">
+         NZ QRPers group member: 
+         <% if @user.membership_confirmed then %> Yes <% elsif @user.membership_requested then %> Application sent <% else %> No <% end %>
+         <% if !@user.membership_requested and !@user.membership_confirmed and @user==current_user %>
+            <%=  link_to "Request Membership", "/qrpnzmembers/new", class: "btn btn-small btn-primary" %>
+         <% end %>
+     </div>
+
+     <div class="erow" id="email">
+         Timezone: <%= @user.timezonename %>
+     </div>
+</div>
+
+<div class="erow">
+   <div class="hrline">
+      <hr noshade size="4">
+   </div>
+</div>
+
+<% if current_user and (@user==current_user or current_user.is_admin or current_user.group_admin) then %>
+   <p>Select the topics for which you would like to receive emails of any new posts</p>
+   <table>
+     <tr>
+        <th>Topic</th>
+        <th>Email</th>
+        <th>&nbsp;</th>
+     </tr>
+     <% @topics.each do |topic| %>
+       <% if topic.allow_mail then %>
+       <tr>
+         <td> <% if topic.parent_topic then %><%=topic.parent_topic.name%> --> <%end%><%=topic.name %></td>
+         <td> <%=if topic.subscribed(@user) then "Yes" else "No" end %></td>
+<% if topic.subscribed(@user) then %>
+         <td> <%=  link_to "Delete", '/users/'+@user.callsign+'/delete?topic_id='+topic.id.to_s, class: "btn btn-small btn-primary" %> </td>
+<% else %>
+         <td> <%=  link_to "Add", '/users/'+@user.callsign+'/add?topic_id='+topic.id.to_s, class: "btn btn-small btn-primary" %> </td>
+<% end %>
+       <tr>
+       <% end %>
+     <% end %>
+   </table>
+<% end %>
+<div class="erow">
+   <div class="hrline">
+      <hr noshade size="4">
+   </div>
+</div>
+
+</div>

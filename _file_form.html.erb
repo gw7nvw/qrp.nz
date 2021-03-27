@@ -1,0 +1,19 @@
+<div class='fullform' <% if @uploadedfile.errors.any? %> style="border-color:#f00;border-style:solid;border-width:1px" <% end %> >
+
+  <%= form_for  @uploadedfile, remote: true, method: "GET", :html => {:name => 'uploadedfileform' } do |f| %>
+    <%= render 'shared/error_messages' %>
+
+    <div id="right_scroll">
+
+      <%= if @uploadedfile.id then "Current Filename: "+@uploadedfile.image.url.split('/')[4].split('?')[0] end %><br/>
+
+      <div class="erow">
+         <div class="sectiontitle25">Filename:</div>
+      </div>
+      <%= f.file_field :image %>
+      <%= f.hidden_field :post_id %>
+      <%= f.submit @submit_button  %>
+
+    </div>
+  <% end %>
+</div>

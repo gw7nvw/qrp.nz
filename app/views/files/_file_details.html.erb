@@ -1,0 +1,24 @@
+ <div class="bordered_box">
+   <div class="box_header">
+      <p><div class="sectiontitle"><%=link_to @uploadedfile.title, '/topics/'+@uploadedfile.topic.url+'?title='+html_escape(@uploadedfile.title).gsub("#","%23")%></div>
+      <p>
+      <%= link_to @uploadedfile.updated_by_name, '/users/'+@uploadedfile.updated_by_name %>
+      <%=if @uploadedfile.updated_at > @uploadedfile.created_at then " updated in " else " uploaded file in " end %>
+      <%=link_to @uploadedfile.topic.name, '/topics/'+@uploadedfile.topic.url%> on
+      <%=@uploadedfile.updated_at.in_time_zone('Pacific/Auckland').strftime("%Y-%m-%d %H:%M")%>
+      <% if current_user and (current_user.id==@uploadedfile.created_by_id or current_user.is_admin) then %>
+        <u><i><%=  link_to "Edit", '/files/'+@uploadedfile.id.to_s+'/edit'%></i></u>
+        <u><i><%= link_to "Delete", '/files/'+@uploadedfile.id.to_s+'/delete', confirm: "Delete uploadedfile: Are you sure?" %></i></u>
+      <% end %>
+      <% if current_user and (current_user.is_admin or (@uploadedfile.topic.is_public or (@uploadedfile.topic.is_owners and current_user.id == @uploadedfile.topic.owner_id))) %>
+        <u><i><%= link_to "Reply", '/posts/new/?topic_id='+@uploadedfile.topic.url+'&title='+@uploadedfile.title.html_safe %></i></u>
+      <% end %>
+
+      </p>
+   </div>
+   <div class="box_contents">
+      <div class="sectiontext"><%=raw @uploadedfile.description%></div>
+      Download: <%= link_to @uploadedfile.image.url.split('/')[4].split('?')[0], @uploadedfile.image.url, :target=>"_blank"%>
+   </div>
+ </div>
+

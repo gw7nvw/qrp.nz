@@ -1,0 +1,26 @@
+<div id="right_scroll">
+  <h2>Topics</h2>
+ <br/>
+  <% if @topics %>
+    <% count=0%>
+    <% @topics.each do |topic| %>
+       <div class="erow"><div class="sectiontitle">
+         <%= link_to topic.name, '/topics/'+topic.id.to_s%>
+       </div></div>
+         <div class="erow"><%=raw topic.description%></div>
+          
+         <% if (topic.items.count>0)  %>
+             <% item=topic.items.first %>
+             <%=render :partial => 'topics/item_summary',  :locals => {:item => item} %>                    
+
+         <% end %>
+ 
+         <div class="hrline">
+            <hr noshade size="4">
+         </div>
+
+       <% count+=1%>
+    <% end %>
+
+  <% end %>
+</div>

@@ -1,0 +1,81 @@
+<div class="fullform">
+   <%= form_for @contest, :html => {:name => 'contestform'} do |f| %>
+    <div id="actionbar-form" class="span12">
+       <div id="crumbs">
+         <%=link_to "Home", '/' %>
+         &nbsp;--&gt;&nbsp;
+         <%=  link_to  "ContestSeries:", '/contest_series' %>
+         &nbsp;--&gt;&nbsp;
+         <%if @contest.contest_series and @contest.contest_series.name%> 
+            <b><%=link_to @contest.contest_series.name, '/contest_series/'+@contest.contest_series.id.to_s %>
+         <% end %>
+         &nbsp;--&gt;&nbsp;
+         <%if @contest.id%> 
+            <b><%=@contest.name%></b>
+            &nbsp;--&gt;&nbsp;
+            <b>Edit</b>
+         <% else %>
+            <b>New</b>
+         <% end %>
+       </div>
+       <div id="controls">
+          <%= f.submit @submit_button, class: "btn btn-small btn-primary btn-highlight" %>
+          <%  if(@submit_button == "Save Changes" and current_user and current_user.is_admin) %>
+            <%= f.submit "Delete", confirm: "Delete contest: Are you sure?", class: "btn btn-small btn-primary", name: "delete", id:  "deletebutton" %>
+          <% end %>
+          <% if params[:referring]=='index'%>
+            <%=  link_to "Cancel", '/contests_series/'+@contest.contest_series_id.to_s, class: "btn btn-small btn-primary" %>
+          <% else %>
+            <%=  link_to "Cancel", '/contests/'+@contest.id.to_s, class: "btn btn-small btn-primary" %>
+          <% end %>
+       </div>
+    </div>
+
+<div id="left_panel"  style="margin-top:0px !important">
+   <%=render 'layouts/left_panel'%>
+</div>
+<div id="right_panel"  style="margin-top:0px !important">
+
+    <div id="right_scroll">
+      <%= hidden_field_tag(:referring, @referring) %>
+      <%= render 'flash' %>
+      <%= render 'shared/error_messages' %>
+
+      <div class="sectiontitle">Contest ID</div>
+      <%if current_user and current_user.is_admin%><%= f.text_field :id %><%else%><%= f.text_field :id, readonly: true %><% end %>
+
+      <div class="sectiontitle">Contest Series ID</div>
+      <%if current_user and current_user.is_admin%><%= f.text_field :contest_series_id %><%else%><%= f.text_field :contest_series_id, readonly: true %><% end %>
+
+      <div class="sectiontitle">Short Name</div>
+      <%= f.text_field :shortname %>
+
+      <div class="sectiontitle">Name</div>
+      <%= f.text_field :name %>
+
+      <div class="sectiontitle">Description</div>
+      <%= f.text_area :description %>
+
+      <div class="sectiontitle">Start Time</div>
+      <%= f.datetime_local_field :start_time %>
+
+      <div class="sectiontitle">End Time</div>
+      <%= f.datetime_local_field :end_time %>
+
+      <%= "Active? " %><br/>
+      <% if current_user and current_user.is_admin%> 
+        <%= f.check_box :is_active%><br/><br/>
+      <% else %>
+        <%= f.check_box :is_active, :readonly => true%><br/><br/>
+      <% end %>
+
+      <div class="erow">
+         <div class="hrline">
+            <hr noshade size="4">
+         </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+</div>
+

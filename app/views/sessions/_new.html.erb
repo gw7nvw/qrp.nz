@@ -1,0 +1,36 @@
+
+<div class="fullform">
+  <%= form_for(:session, url: sessions_path) do |f| %>
+    <div id="actionbar-form" class="span12">
+       <div id="crumbs">
+         <%=link_to "Home", '/' %>
+         &nbsp;--&gt;&nbsp;
+         <b>Sign In</b>
+       </div>
+
+       <div id="controls">
+          <%= f.submit "Sign in", class: "btn btn-small btn-primary btn-highlight"%>
+          <%= link_to "Forgotton password", new_password_reset_path, class: "btn btn-small btn-primary" %>
+       </div>
+    </div>
+
+<div id="left_panel"  style="margin-top:0px !important">
+   <%=render 'layouts/left_panel'%>
+</div>
+<div id="right_panel"  style="margin-top:0px !important">
+
+    <div id="right_scroll">
+      <%= hidden_field_tag(:referring, @referring) %>
+      <%= render 'flash' %>
+      <%= render 'shared/error_messages' %>
+
+      <div class="sectiontitle">Callsign</div>
+      <%= f.text_field :email %>
+
+      <div class="sectiontitle">Password</div>
+      <%= f.password_field :password %>
+    </div>
+  <% end %>
+</div>
+</div>
+

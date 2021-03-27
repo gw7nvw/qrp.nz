@@ -1,0 +1,117 @@
+
+<script> 
+   document.getElementById("page_status").innerHTML = '';
+</script>
+
+<%= javascript_include_tag('rsa/jsbn', 'rsa/prng4', 'rsa/rng', 'rsa/rsa', 'rsa/base64', :cache => true) %>
+
+<div class="fullform">
+    <%= form_for(@user) do |f| %>
+      <div id="actionbar-form" class="span12">
+       <div id="crumbs">
+         <%=link_to "Home", '/' %>
+         &nbsp;--&gt;&nbsp;
+         <%=  link_to  "Users", '/users' %>
+         &nbsp;--&gt;&nbsp;
+         <%if @user.id%>
+            <b><%=link_to @user.callsign.upcase, '/users/'+@user.callsign %></b>
+            &nbsp;--&gt;&nbsp;
+            <b>Edit</b>
+         <% else %>
+            <b>New</b>
+         <% end %>
+
+       </div>
+
+       <div id="controls">
+          <%= f.submit @submit_button, onclick: "signupHandler();", class: "btn btn-small btn-primary btn-highlight" %>
+          <% if @user.id %><% if params[:referring]=='index'%>
+            <%=  link_to "Cancel", '/users', class: "btn btn-small btn-primary" %>
+          <% else %>
+            <%=  link_to "Cancel", '/users/'+@user.callsign, class: "btn btn-small btn-primary" %>
+          <% end %> <% end %>
+
+          <%  if(@submit_button == "Save Changes" and @current_user.is_admin) %>
+            <%= f.submit "Delete", confirm: "Delete user: Are you sure?", class: "btn btn-small btn-primary" %>
+          <% end %>
+
+       </div>
+      </div>
+
+<div id="left_panel"  style="margin-top:0px !important">
+   <%=render 'layouts/left_panel'%>
+</div>
+<div id="right_panel"  style="margin-top:0px !important">
+
+
+      <%= render 'shared/error_messages' %>	
+
+      <div id="right_scroll">
+
+      Callsign:
+      <%= f.text_field :callsign %>
+
+      <%= "First name" %>
+      <%= f.text_field :firstname %>
+
+      <%= "Last name" %>
+      <%= f.text_field :lastname %>
+
+      <%= f.label :email %>
+      <%= f.text_field :email %>
+     
+      <%= f.label "Home QTH" %>
+      <%= f.text_field :home_qth %>
+
+      <%if current_user and current_user.is_admin then %>
+        <%= f.label "Mail account:" %>
+        <%= f.text_field :mailuser %>
+      <% end %>
+      <% if(@submit_button != "Save Changes") %>
+        <% if (!@user.membership_confirmed and !@user.membership_requested)  then %>
+          <div class="erow"><div class="sectiontext">Join the QRPers NZ group?
+          <%= f.check_box :membership_requested %></div></div>
+          <small>Group membership is optional and is not required for HOTA participation or website access.  Membership allows you to <a href="https://qrp.nz/topics/13-about-nz-qrpers-group" target="blank"> take part in group events </a> and receive group newsletters. By requesting membership you are accepting the QRPers NZ <a href="https://qrp.nz/topics/21-nz-qrpers-group-code-of-conduct" target="blank"> code of conduct </a>. You can also request membership at a later date by using the link under your profile on this site.</small>
+        <% end %>
+      <% end %>
+
+      <% if  current_user and (current_user.is_admin or current_user.group_admin) and @submit_button == "Save Changes" then %>
+        <%= f.label :membership_requested %>
+        <%= f.check_box :membership_requested %>
+
+        <%= f.label :membership_confirmed %>
+        <%= f.check_box :membership_confirmed %>
+      <% end %>
+      <% if  current_user and current_user.is_admin and @submit_button == "Save Changes" then %>
+
+        <%= f.label :activated %>
+        <%= f.check_box :activated %>
+        
+        <%= f.label :is_modifier %>
+        <%= f.check_box :is_modifier %>
+
+        <%= f.label :group_admin %>
+        <%= f.check_box :group_admin %>
+      <% end %>
+ 
+      <%= f.label :timezone %>
+      <%= collection_select( :user, :timezone, Timezone.all.order(:name), :id, :name, {}) %></td>
+
+      <%= f.label :password %>
+      <%= f.password_field :upassword %>
+      <%= f.hidden_field :password %>
+
+      <%= f.label :password_confirmation, "Confirmation" %>
+      <%= f.password_field :upassword_confirmation %>
+      <%= f.hidden_field :password_confirmation %>
+      <div class="erow"><i>Password rules: any combination of letters and numbers. No spaces or extended characters</i></div>
+    Data submitted in this form uses <%= link_to "RSA encryption", "https://en.wikipedia.org/wiki/RSA_Security" %> to protect your information
+    </div>
+  <%= hidden_field_tag :public_modulus, @public_modulus %>
+  <%= hidden_field_tag :public_exponent, @public_exponent %>
+
+
+    <% end %>
+  </div>
+
+</div>

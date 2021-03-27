@@ -1,0 +1,83 @@
+<script type="text/javascript">
+//<![CDATA[
+   bkLib.onDomLoaded(startEdit);
+
+function startEdit() {
+  nicEditors.allTextAreas();
+  init();
+}
+
+</script>
+
+<div class='fullform' <% if @image.errors.any? %> style="border-color:#f00;border-style:solid;border-width:1px" <% end %> >
+
+  <%= form_for  @image, :html => {:name => 'imageform'}  do |f| %>
+     <%=hidden_field_tag(:topic_id, @topic.id)%>
+     <div id="actionbar-form" class="span12">
+       <div id="crumbs">
+         <%=link_to "Home", '/'%>
+         &nbsp;--&gt;&nbsp;
+         <%=  link_to  "Topics", '/topics'%>
+         &nbsp;--&gt;&nbsp;
+         <%if @topic%>
+            <b><%=link_to @topic.name, '/topics/'+@topic.url%></b>
+            &nbsp;--&gt;&nbsp;
+         <% end %>
+         <%if @image.id%>
+            <b><%=link_to @image.title, '/images/'+@image.id.to_s%></b>
+            &nbsp;--&gt;&nbsp;
+            <b>Edit</b>
+         <% else %>
+            <b>New</b>
+         <% end %>
+
+       </div>
+
+       <div id="controls">
+          <%= f.submit @submit_button, class: "btn btn-small btn-primary btn-highlight" %>
+          <% if @image.id %><% if params[:referring]=='index'%>
+            <%=  link_to "Cancel", '/images', class: "btn btn-small btn-primary"%>
+          <% else %>
+            <%=  link_to "Cancel", '/images/'+@image.id.to_s, class: "btn btn-small btn-primary"%>
+          <% end %> <% end %>
+          <%  if(@submit_button == "Save Changes" and (current_user.is_admin or current_user.id==@image.created_by_id)) %>
+            <%= f.submit "Delete Image", confirm: "Delete Image: Are you sure?", class: "btn btn-small btn-primary", id:  "deletebutton" %>
+          <% end %>
+
+       </div>
+     </div>
+
+<div id="left_panel"  style="margin-top:0px !important">
+   <%=render 'layouts/left_panel'%>
+</div>
+<div id="right_panel"  style="margin-top:0px !important">
+
+
+     <%= render 'shared/error_messages' %>
+
+     <div id="right_scroll">
+
+      <div class="erow">
+         <div class="sectiontitle25">Name:</div>
+      </div>
+      <%= f.text_field :title %>
+
+        <%=f.label :desctiption%>
+          <div id="editPanel"></div>
+          <span id="descrSpan">
+            <%= f.text_area :description %>
+          </span>
+
+      <%= if @image.id then link_to image_tag(@image.image.url(:thumb)), @image.image.url(:thumb), :target=>"_blank" end %>
+
+      <div class="erow">
+         <div class="sectiontitle25">Filename:</div>
+      </div>
+      <%= f.file_field :image %>
+   <% end %>
+</div>
+</div>
+<script>
+  startEdit();
+</script>
+

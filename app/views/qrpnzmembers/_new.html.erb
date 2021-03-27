@@ -1,0 +1,72 @@
+
+<script> 
+   document.getElementById("page_status").innerHTML = '';
+</script>
+
+<div class="fullform">
+    <%= form_for @member do |f| %>
+      <div id="actionbar-form" class="span12">
+       <div id="crumbs">
+         <%=link_to "Home", '/' %>
+         &nbsp;--&gt;&nbsp;
+         Forms
+         &nbsp;--&gt;&nbsp;
+            <b>QRPers NZ membership</b>
+       </div>
+
+       <div id="controls">
+          <%= f.submit "Send Application", onclick: "signupHandler();", class: "btn btn-small btn-primary btn-highlight" %>
+          <% if params[:referring]=='hota'%>
+            <%=  link_to "Cancel", 'http://ontheair/users/'+@user.callsign, class: "btn btn-small btn-primary" %>
+          <% else %>
+            <%=  link_to "Cancel", '/users/'+@user.callsign, class: "btn btn-small btn-primary" %>
+          <% end %> 
+
+       </div>
+      </div>
+
+<div id="left_panel"  style="margin-top:0px !important">
+   <%=render 'layouts/left_panel'%>
+</div>
+<div id="right_panel"  style="margin-top:0px !important">
+      <%= render 'flash' %>
+      <%= render 'shared/error_messages' %>	
+
+      <div id="right_scroll">
+<div class="sectiontitle">
+  QRPers NZ membership
+</div>
+<br/>
+<p>Membership allows you to <a href="https://qrp.nz/topics/13-about-nz-qrpers-group" target="blank"> take part in group events </a> and receive group newsletters. By requesting membership you are accepting the QRPers NZ <a href="https://qrp.nz/topics/21-nz-qrpers-group-code-of-conduct" target="blank"> code of conduct </a>. Group membership is optional and is not required for HOTA participation or access to this website.</p>
+<p>The following email will be sent to the QRPers NZ group coordinator.  Please check your <b>details</b> are correct and add any <b>comments</b> required in the comments field.  Your details can be corrected by updating your profile (under your callsign  on the menu bar).</p>
+<p>Click <b>Send Application</b> to send:</p>
+
+<div class="erow">
+   <div class="hrline">
+      <hr noshade size="4">
+   </div>
+</div>
+
+<p> To the QRPers NZ group coordinator,</p>
+
+<p>A new QRPers NZ group membership request has been received via the qrp.nz website.  The details of the request follow:</p>
+
+<p>
+Callsign: <%=@user.callsign%><br/>
+
+Name: <%=@user.firstname%> <%=@user.lastname%><br/>
+
+Email: <%=@user.email%><br/>
+
+Home QTH: <%=@user.home_qth%><br/>
+
+</p>
+      <div class="sectiontitle">Comments:</div>
+      <%= f.text_area :comments %>
+<p>
+73s from the team at qrp.nz
+</p>
+<input type="hidden" name="referring" value="<%=@referring%>"/>
+
+<% end %>
+</div>

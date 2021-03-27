@@ -1,0 +1,50 @@
+<% provide(:title, 'Photos') %>
+<% @title=" | Photos" %>
+<%= render 'flash' %>
+<script>
+   update_title('<%=@title%>');
+   document.getElementById("page_status").innerHTML = '';
+
+$(function () {
+  $('#right_panel .pagination a').on('click', function () {
+    $.getScript(this.href);
+    return false;
+  });
+});
+
+</script>
+
+<%if @order=='latest'%>
+  <div class="date_pagination"> <%= will_paginate(@photos, :renderer => PaginationListLinkRenderer, :order => @order, :inner_window => 3) %></div>
+<% else %>
+  <div class="name_pagination"> <%= will_paginate(@photos, :renderer => PaginationListLinkRenderer, :order => @order) %></div>
+<% end %>
+
+  <ul class="photos">
+   <% if @photos %>
+    <% @photos.each do |photo| %>
+      <li>
+        <div class="rowtitle">
+          <%= link_to image_tag(photo.image.url(:thumb)), photo, remote: true, :id => 'photo_link_'+photo.id.to_s, :onclick => "linkHandler('photo_link_"+photo.id.to_s+"')" %>
+        </div>
+        <div class="rowtext">
+          <%= photo.name%> <br/>
+          by 
+          <% if photo.author and photo.author.length>0 then %> 
+            <%=photo.author%> 
+          <% else %>
+            <%= link_to photo.createdBy.name.capitalize, '/users/'+photo.createdBy.name, remote: true%> 
+          <% end%>
+          (last updated <%=photo.updated_at.strftime("%F")%>)
+        </div>
+      </li>
+    <% end %>
+   <% end %>
+  </ul>
+<%if @order=='latest'%>
+  <div class="date_pagination"> <%= will_paginate(@photos, :renderer => PaginationListLinkRenderer, :order => @order, :inner_window => 3) %></div>
+<% else %>
+  <div class="name_pagination"> <%= will_paginate(@photos, :renderer => PaginationListLinkRenderer, :order => @order) %></div>
+<% end %>
+
+

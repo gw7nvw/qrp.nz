@@ -1,0 +1,254 @@
+<script> 
+   document.getElementById("page_status").innerHTML = '';
+</script>
+<div id="actionbar" class="span12">
+   <div id="crumbs">
+     <%=link_to "Home", '/'%>
+     &nbsp;--&gt;&nbsp;
+     <%=  link_to  "Contest:", '/contest_series'%>
+     &nbsp;--&gt;&nbsp;
+     <b><%= @contest_series.name %></b>
+     </div>
+   <div id="controls">
+       <% if current_user and current_user.is_admin %>
+            <%=  link_to "Edit", '/contest_series/'+@contest_series.id.to_s+'/edit', class: "btn btn-small btn-primary" %>
+       <% end %>
+       <%=  link_to "Index", "/contest_series", class: "btn btn-small btn-primary" %>
+   </div>
+</div>
+<div id="left_panel">
+   <%=render 'layouts/left_panel'%>
+</div>
+
+<div id="right_panel">
+<div id="right_scroll">
+   <%= render 'flash' %>
+   <div class="erow" id="name">
+      <div class="sectiontitle">
+        <%=link_to @contest_series.name, '/contest_series/'+@contest_series.id.to_s %>
+      </div>
+   </div>
+   <div class="erow" id="description">
+      <b><i><%= @contest_series.start_date.to_s%> to <%= @contest_series.end_date.to_s%></i></b>
+      <p><%= @contest_series.description %></p>
+   </div>
+
+   <div class="logs">
+      <p>
+       <% if @contest_series.is_active then %>
+         <%=if @contest_series.xls_log_url and @contest_series.xls_log_url!='' then link_to "Download blank Excel log", @contest_series.xls_log_url, class: "btn btn-small btn-primary" end  %> 
+         <%=if @contest_series.odt_log_url and @contest_series.odt_log_url!='' then link_to "Download blank ODS log", @contest_series.odt_log_url, class: "btn btn-small btn-primary" end %> 
+         <%=if @contest_series.log_url and @contest_series.log_url!='' then link_to 'View log instructions', @contest_series.log_url else "[No log templates available at this time]" end%></p>
+       <% end %>
+   </div>
+<% if current_user and current_user.is_admin then %>
+
+   <div class="erow" id="log_requirements">
+      <div class="rowtitle"><%= "Log requirements:" %></div>
+   </div>
+   <table>
+     <tr>
+       <th> QRP vs QRO</th>
+       <th> Portable</th>
+       <th> Backcountry</th>
+       <th> QTH</th>
+       <th> RST</th>
+       <th> Index</th>
+       <th> Frequency</th>
+       <th> Per-hour-score</th>
+      </tr>
+      <tr>
+         <td><%=if @contest_series.include_qrp then "Yes" else "no" end%></td>
+         <td><%=if @contest_series.include_portable then "Yes" else "no" end%></td>
+         <td><%=if @contest_series.include_backcountry then "Yes" else "no" end%></td>
+         <td><%=if @contest_series.include_qth then "Yes" else "no" end%></td>
+         <td><%=if @contest_series.include_rst then "Yes" else "no" end%></td>
+         <td><%=if @contest_series.include_index then "Yes" else "no" end%></td>
+         <td><%=if @contest_series.include_freq then "Yes" else "no" end%></td>
+         <td><%=if @contest_series.score_per_hour then "Yes" else "no" end%></td>
+     </tr>
+   </table>
+
+   <div class="erow" id="members_only">
+      <div class="rowtitle"><%= "Group Members Only?" %></div>
+      <div class="textext"><%= if @contest_series.members_only then "Yes" else "No" end %></div>
+   </div>
+   <div class="erow" id="email">
+      <div class="rowtitle"><%= "Active?" %></div>
+      <div class="textext"><%= if @contest_series.is_active then "Yes" else "No" end %></div>
+   </div>
+
+<% end %>
+
+
+   <div class="erow">
+      <div class="hrline">
+         <hr noshade size="4">
+      </div>
+   </div>
+
+
+   <div class="sectiontitle_bold">Contest dates:</div>
+   <div class="erow">
+     <% if not @contest_series.contests or (@contest_series.contests and @contest_series.contests.count==0) then %>
+        <i>No Contests have been added to this series.  Add one!</i></br>
+     <% end %>
+     <table>
+       <% @contest_series.contests.order(:start_time).each do |contest| %>
+         <tr>
+            <td>
+              <% if current_user and current_user.is_admin %>
+                <span title="Click to edit row"><%= link_to image_tag("/assets/pencil_edit.png", :class => 'dock-item'), '/contests/'+contest.id.to_s+'/edit?referring=index', id:  "editbutton", alt: "Edit"  %></span>
+              <% end %>
+               <%=link_to contest.name, "/contests/"+contest.id.to_s %>
+            </td>
+            <td>
+              <%=contest.local_start_date(current_user)%> from <%=contest.local_start_time(current_user)%> to 
+              <%=if contest.local_start_date(current_user)!=contest.local_end_date(current_user) then contest.local_end_date(current_user) end%> 
+              <%=contest.local_end_time(current_user)%>
+            </td>
+            <td>
+               <%if current_user and @contest_series.is_active then%>
+                 <% cl=ContestLog.where(contest_id: contest.id, callsign: current_user.callsign) %>
+                 <% if cl and cl.count>0 then %>
+                   <%=  link_to "Delete your log", '/contest_logs/'+cl.first.id.to_s+'/delete', class: "btn btn-small btn-primary", confirm: "Delete log: Are you sure?"%>
+                   <%=  link_to "Edit your log", "/contest_logs/"+cl.first.id.to_s+"/edit", class: "btn btn-small btn-primary" %>
+                 <% else %>
+                   <%=  link_to "Add your log", "/contest_logs/new?contest_id="+contest.id.to_s, class: "btn btn-small btn-primary" %>
+                   <%=  link_to "Upload Your Log", '/uploads/new?contest_id='+contest.id.to_s, class: "btn btn-small btn-primary" %>
+
+                 <% end %>
+               <% elsif @contest_series.is_active then  %>
+                 <p><i>Sign in to add your logs</i></p>
+               <% end %>
+            </td>
+         </tr> 
+       <% end %>
+     </table>
+   </div>   
+
+
+   <% if current_user and current_user.is_admin %>
+     <%=  link_to "Add Contest to series", "/contests/new?series_id="+@contest_series.id.to_s, class: "btn btn-small btn-primary btn-highlight" %>
+   <% end %>
+
+   <div class="erow">
+      <div class="hrline">
+         <hr noshade size="4">
+      </div>
+   </div>
+   <div class="erow">
+     <div class="sectiontitle_bold">Current scores:</div>
+   </div>
+   <div class="erow">
+     <h2>Total</h2>
+     <table style="width:180px">
+         <tr>
+           <th>Call</th>
+ <% @contest_series.contests.order(:start_time).each do |cc| %>
+           <th><%=cc.shortname%></th>
+ <% end %>
+           <th>Total</th>
+         </tr>       
+       <% @contest_series.callsigns.sort.each do |c| %>
+         <tr>
+           <td><%=c%></td>
+ <% @contest_series.contests.order(:start_time).each do |cc| %>
+ <% log_ids = ContestLog.where(:contest_id => cc.id, :callsign => c) %>
+ <% if log_ids and log_ids.count>0 then log_id=log_ids.first.id else log_id=nil end%>
+
+           <td><%=if log_id then link_to cc.points(c), "/contest_logs/"+log_id.to_s else cc.points(c) end%></td>
+ <% end %>
+           <td><%=@contest_series.points(c)%></td>
+         </tr>
+       <% end %>
+     </table> 
+   </div>
+
+   <div class="erow">
+      <div class="hrline">
+         <hr noshade size="4">
+      </div>
+   </div>
+
+<% if @contest_series.score_per_hour then %>
+ <% hour=0; while hour<@contest_series.contests.first.hours do%>
+  <div class="erow">
+     <h2><%=if hour==0 then "40m+" elsif hour==1 then "80m" end%></h2>
+     <table style="width:180px">
+         <tr>
+           <th>Call</th>
+ <% @contest_series.contests.order(:start_time).each do |cc| %>
+           <th><%=cc.shortname%></th>
+ <% end %>
+           <th>Total</th>
+         </tr>
+       <% @contest_series.callsigns.sort.each do |c| %>
+         <tr>
+           <td><%=c%></td>
+ <% @contest_series.contests.order(:start_time).each do |cc| %>
+ <% log_ids = ContestLog.where(:contest_id => cc.id, :callsign => c) %>
+ <% if log_ids and log_ids.count>0 then log_id=log_ids.first.id else log_id=nil end%>
+
+           <td><%=if log_id then link_to cc.hour_points(hour,c), "/contest_logs/"+log_id.to_s else cc.points(c) end%></td>
+ <% end %>
+           <td><%=@contest_series.hour_points(hour,c)%></td>
+         </tr>
+       <% end %>
+     </table>
+   </div>
+
+ <% hour=hour+1 %>
+   <div class="erow">
+      <div class="hrline">
+         <hr noshade size="4">
+      </div>
+   </div>
+ <% end %>
+<% end %> 
+
+
+   <div class="erow">
+     <div class="sectiontitle_bold">Scoring rules per contact:</div>
+   </div>
+
+   <div class="erow">
+     <table style="width:270px">
+       <tr>
+         <td>Base points</td>
+         <td><%=@contest_series.base_points.to_s%></td>
+       </tr><tr>
+         <td>Worked station QRP bonus</td>
+         <td>+<%=@contest_series.qrp_points.to_s%></td>
+       </tr><tr>
+         <td>Your station portable bonus</td>
+         <td>+<%=@contest_series.portable_points.to_s%></td>
+       </tr><tr>
+         <td>Worked station portable bonus</td>
+         <td>+<%=@contest_series.portable_points.to_s%></td>
+       </tr><tr>
+         <td>Your station backcountry bonus</td>
+         <td>+<%=@contest_series.backcountry_points.to_s%></td>
+       </tr><tr>
+         <td>Worked station backcountry bonus</td>
+         <td>+<%=@contest_series.backcountry_points.to_s%></td>
+       </tr><tr>
+         <td>CW bonus</td>
+         <td>+<%=@contest_series.cw_points.to_s%></td>
+       </tr><tr>
+         <td>DX bonus</td>
+         <td>+<%=@contest_series.dx_points.to_s%></td>
+       </tr><tr>
+         <td>Validated contact bonus</td>
+         <td>+<%=@contest_series.valid_points.to_s%></td>
+       </tr>
+     </table>
+   </div>
+   <div class="erow">
+      <div class="hrline">
+         <hr noshade size="4">
+      </div>
+   </div>
+
+</div>
+</div>

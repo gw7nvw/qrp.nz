@@ -1,0 +1,24 @@
+<% provide(:title, "Password Reset") %>
+<% @title=" | Password Reset " %>
+<%= render 'flash' %>
+
+<script> 
+   document.getElementById("page_status").innerHTML = '';
+</script>
+<div class="erow">
+  <p>Enter your account's registered email below to request a password reset.  You will be emailed with a link to reset your password.  The email may end up in your spam folder.</p>
+  <p>Send a mail to me,  admin@qrp.nz if you need to request a manual reset instead.  </p>
+</div>
+
+<div class="erow">
+    <%= form_for :password_reset, url: password_resets_path do |f| %>
+
+      <%= f.label "Registered email address for your account" %>
+      <%= f.text_field :email %>
+
+      <br/>
+
+      <%= f.submit "Reset password", class: "btn btn-small btn-primary" %>
+    <% end %>
+
+</div>

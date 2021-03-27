@@ -1,0 +1,36 @@
+<div id="actionbar" class="span12">
+   <div id="crumbs">
+     <%=link_to "Home", '/'%>
+     &nbsp;--&gt;&nbsp;
+     <%=  link_to  "Topics", '/topics'%>
+     &nbsp;--&gt;&nbsp;
+     <%=  link_to  @post.topic_name, '/topics/'+@post.topic.url%>
+     &nbsp;--&gt;&nbsp;
+     <b><%= @post.title %></b>
+   </div>
+   <div id="controls">
+       <% if current_user and (current_user.is_admin or @post.created_by_id==current_user.id) %>
+            <%=  link_to "Edit Post", '/posts/'+@post.id.to_s+'/edit', class: "btn btn-small btn-primary"%>
+            <%=  link_to "Delete Post", '/posts/'+@post.id.to_s+'/delete', confirm: "Delete post: Are you sure?", class: "btn btn-small btn-primary"%>
+       <% end %>
+       <%=  link_to "Index", "/topics/"+@post.topic.url, class: "btn btn-small btn-primary"%>
+   </div>
+</div>
+
+<div id="left_panel">
+   <%=render 'layouts/left_panel'%>
+</div>
+<div id="right_panel">
+
+
+
+<div id="right_scroll">
+   <%= render 'flash' %>
+  <%= render 'post_details' %>
+<div class="erow">
+   <div class="hrline">
+      <hr noshade size="4">
+   </div>
+</div>
+</div>
+</div>

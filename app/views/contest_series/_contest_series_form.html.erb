@@ -1,0 +1,140 @@
+<div class="fullform">
+   <%= form_for @contest_series, :html => {:name => 'contest_seriesform'} do |f| %>
+    <div id="actionbar-form" class="span12">
+       <div id="crumbs">
+         <%=link_to "Home", '/'  %>
+         &nbsp;--&gt;&nbsp;
+         <%=  link_to  "ContestSeries:", '/contest_series' %>
+         &nbsp;--&gt;&nbsp;
+         <%if @contest_series.id%> 
+            <b><%=link_to @contest_series.name, '/contest_series/'+@contest_series.id.to_s %>
+            &nbsp;--&gt;&nbsp;
+            <b>Edit</b>
+         <% else %>
+            <b>New</b>
+         <% end %>
+       </div>
+       <div id="controls">
+          <%= f.submit @submit_button, class: "btn btn-small btn-primary btn-highlight" %>
+          <%  if(@submit_button == "Save Changes" and current_user and current_user.is_admin) %>
+            <%= f.submit "Delete", confirm: "Delete contest_series: Are you sure?", class: "btn btn-small btn-primary", name: "delete", id:  "deletebutton" %>
+          <% end %>
+          <% if params[:referring]=='index'%>
+            <%=  link_to "Cancel", '/contest_series', class: "btn btn-small btn-primary"%>
+          <% else %>
+            <%=  link_to "Cancel", '/contest_series/'+@contest_series.id.to_s, class: "btn btn-small btn-primary"%>
+          <% end %>
+       </div>
+    </div>
+<div id="left_panel"  style="margin-top:0px !important">
+   <%=render 'layouts/left_panel'%>
+</div>
+<div id="right_panel"  style="margin-top:0px !important">
+
+    <div id="right_scroll">
+      <%= hidden_field_tag(:referring, @referring) %>
+      <%= render 'flash' %>
+      <%= render 'shared/error_messages' %>
+
+      <div class="sectiontitle">ContestSeries ID</div>
+      <%if current_user and current_user.is_admin%><%= f.text_field :id %><%else%><%= f.text_field :id, readonly: true %><% end %>
+
+      <div class="sectiontitle">Name</div>
+      <%= f.text_field :name %>
+
+      <div class="sectiontitle">Description</div>
+      <%= f.text_area :description %>
+
+      <div class="sectiontitle">Minimum log instructions</div>
+      <%= f.text_area :minreqs %>
+
+      <div class="sectiontitle">Log instructions</div>
+      <%= f.text_field :log_url %>
+
+      <div class="sectiontitle">XLS Log sheet</div>
+      <%= f.text_field :xls_log_url %>
+
+      <div class="sectiontitle">ODS log sheet</div>
+      <%= f.text_field :odt_log_url %>
+
+
+      <div class="sectiontitle">Start Date</div>
+      <%= f.date_field :start_date %>
+
+      <div class="sectiontitle">End Date</div>
+      <%= f.date_field :end_date %>
+
+      <%= "Group Members only? " %><br/>
+      <%= f.check_box :members_only%><br/><br/>
+
+      <%= "Base points for a contact " %><br/>
+      <%= f.text_field :base_points%><br/><br/>
+ 
+      <%= "Bonus points for both partys QRP " %><br/>
+      <%= f.text_field :qrp_points%><br/><br/>
+
+      <%= "Bonus points for each party portable " %><br/>
+      <%= f.text_field :portable_points%><br/><br/>
+
+      <%= "Bonus points for each party backcountry " %><br/>
+      <%= f.text_field :backcountry_points%><br/><br/>
+
+      <%= "Bonus points for CW " %><br/>
+      <%= f.text_field :cw_points%><br/><br/>
+
+      <%= "Bonus points for DX " %><br/>
+      <%= f.text_field :dx_points%><br/><br/>
+
+      <%= "Bonus points for validated contact " %><br/>
+      <%= f.text_field :valid_points%><br/><br/>
+
+      <%= "Separate scores for each hour of contest" %><br/>
+      <%= f.check_box :score_per_hour%><br/><br/>
+
+      <%= "Active? " %><br/>
+      <% if current_user and current_user.is_admin%> 
+        <%= f.check_box :is_active%><br/><br/>
+      <% else %>
+        <%= f.check_box :is_active, :readonly => true%><br/><br/>
+      <% end %>
+
+      <div class="erow">
+         <div class="hrline">
+            <hr noshade size="4">
+         </div>
+      </div>
+
+      <div class="erow"><div class="sectiontitle">Log requirements:</div></div>
+      <div class="erow">
+      <%= "QRP vs QRO? " %><br/>
+      <%= f.check_box :include_qrp%><br/><br/>
+
+      <%= "Portable? " %><br/>
+      <%= f.check_box :include_portable%><br/><br/>
+
+      <%= "Backcountry? " %><br/>
+      <%= f.check_box :include_backcountry%><br/><br/>
+
+      <%= "QTH? " %><br/>
+      <%= f.check_box :include_qth%><br/><br/>
+
+      <%= "RST? " %><br/>
+      <%= f.check_box :include_rst%><br/><br/>
+
+      <%= "Index? " %><br/>
+      <%= f.check_box :include_index%><br/><br/>
+
+      <%= "Frequency? " %><br/>
+      <%= f.check_box :include_freq%><br/><br/>
+      </div>
+      <div class="erow">
+         <div class="hrline">
+            <hr noshade size="4">
+         </div>
+      </div>
+   
+    </div>
+  <% end %>
+</div>
+
+</div>

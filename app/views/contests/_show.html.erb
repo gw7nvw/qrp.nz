@@ -1,0 +1,123 @@
+<script> 
+   document.getElementById("page_status").innerHTML = '';
+</script>
+
+<div id="actionbar" class="span12">
+   <div id="crumbs">
+     <%=link_to "Home", '/'%>
+     &nbsp;--&gt;&nbsp;
+     <%= link_to @contest.contest_series.name, '/contest_series/'+@contest.contest_series.id.to_s %>
+     &nbsp;--&gt;&nbsp;
+     <%= @contest.name %>
+
+   </div>
+   <div id="controls">
+       <% if current_user and current_user.is_admin %>
+            <%=  link_to "Edit", '/contests/'+@contest.id.to_s+'/edit', class: "btn btn-small btn-primary" %>
+       <% end %>
+       <% if current_user then
+          cls=ContestLog.where(contest_id: @contest.id, callsign: current_user.callsign) 
+       else cls=[] end %>
+       <% if current_user and cls.count==0 and @contest.contest_series.is_active then %>
+            <%=  link_to "Add Your Log", '/contest_logs/new?contest_id='+@contest.id.to_s, class: "btn btn-small btn-primary" %>
+            <%=  link_to "Upload Your Log", '/uploads/new?contest_id='+@contest.id.to_s, class: "btn btn-small btn-primary" %>
+       <% end %>
+       <% if current_user and current_user.is_admin and @contest.contest_series.is_active and cls.count>0 then %>
+            <%=  link_to "Add a Log", '/contest_logs/new?contest_id='+@contest.id.to_s, class: "btn btn-small btn-primary" %>
+            <%=  link_to "Upload a Log", '/uploads/new?contest_id='+@contest.id.to_s, class: "btn btn-small btn-primary" %>
+       <% end %>
+       <%=  link_to "Index", "/contest_series/"+@contest.contest_series.id.to_s, class: "btn btn-small btn-primary" %>
+   </div>
+</div>
+<div id="left_panel">
+   <%=render 'layouts/left_panel'%>
+</div>
+
+<div id="right_panel">
+<div id="right_scroll">
+   <%= render 'flash' %>
+   <div class="erow" id="name">
+      <div class="sectiontitle">
+        <%=link_to @contest.name, '/contests/'+@contest.id.to_s %>
+      </div>
+   </div>
+   <div class="erow" id="description">
+      <p><i><b>From <%=@contest.local_start_date(current_user)%> <%= @contest.local_start_time(current_user)%> to <%=if @contest.local_start_date(current_user)!=@contest.local_end_date(current_user) then @contest.local_end_date(current_user) end%> <%= @contest.local_end_time(current_user)%></b></i></p>
+      <p><%= @contest.description %></p>
+   </div>
+<% if current_user and current_user.is_admin then %>
+   <div class="erow" id="email">
+      <div class="rowtitle"><%= "Active?" %></div>
+      <div class="textext"><%= if @contest.is_active then "Yes" else "No" end %></div>
+   </div>
+
+<% end %>
+
+   <div class="erow">
+      <div class="hrline">
+         <hr noshade size="4">
+      </div>
+   </div>
+
+
+   <div class="sectiontitle_bold">Logs:</div>
+   <div class="erow">
+     <% if not @contest.logs or (@contest.logs and @contest.logs.count==0) then %>
+        <i>No Logs have been added to this contest.  Add yours!</i></br>
+     <% end %>
+     <table>
+       <tr>
+          <th>Callsign</th>
+          <th>Contacts</th>
+          <th <%=if @contest.contest_series.score_per_hour then "colspan="+(@contest.hours+1).to_s end%>>Score</th>
+          <th></th>
+       </tr>
+<%if @contest.contest_series.score_per_hour %>
+       <tr>
+          <th></th>
+          <th></th>
+ <% hour=0; while hour<@contest.hours do%>
+          <th><%=if hour==0 then "40m+" elsif hour==1 then "80m" end%></h2>
+ <% hour=hour+1 %>
+ <% end%>
+
+          <th>Total</th>
+          <th></th>
+        </tr>
+<% end %>
+       <% @contest.logs.order(:callsign).each do |log| %>
+         <tr>
+            <td>
+               <%= link_to log.callsign, '/contest_logs/'+log.id.to_s%>
+            </td>
+            <td><%=log.contacts.count.to_s%></td>
+ <% if @contest.contest_series.score_per_hour then %>
+   <% hour=0; while hour<@contest.hours do%>
+            <td><%=log.hour_points(hour)%></td>
+            <% hour=hour+1%>
+   <% end%>
+            <td><%=log.points%></td>
+ <% else %>
+            <td><%=log.points%></td>
+ <% end %>
+            <td>
+               <%if current_user and @contest.contest_series.is_active and (log.callsign==current_user.callsign or current_user.is_admin) then%>
+                   <%=  link_to "Delete log", '/contest_logs/'+log.id.to_s+'/delete', class: "btn btn-small btn-primary", confirm: "Delete log: Are you sure?"%>
+                   <%=  link_to "Edit log", "/contest_logs/"+log.id.to_s+"/edit", class: "btn btn-small btn-primary" %>
+               <% end %>
+            </td>
+         </tr> 
+       <% end %>
+     </table>
+   </div>   
+   <div class="erow">
+     <% if !current_user then %><p><i>Sign in to add your logs</i></p><% end %>
+   </div>
+   <div class="erow">
+      <div class="hrline">
+         <hr noshade size="4">
+      </div>
+   </div>
+
+</div>
+</div>

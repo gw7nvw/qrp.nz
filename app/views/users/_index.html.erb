@@ -1,0 +1,72 @@
+<script>
+   document.getElementById("page_status").innerHTML = '';
+</script>
+
+<div id="actionbar" class="span12">
+   <div id="crumbs">
+     <%=link_to "Home", '/' %>
+     &nbsp;--&gt;&nbsp;
+     <b>Users</b>
+     </div>
+   <div id="controls">
+       <% if current_user and current_user.is_admin or current_user.group_admin %>
+            <%=  link_to "Download", '/users.csv', class: "btn btn-small btn-primary" %>
+            <%=  link_to "Add User", '/users/new', class: "btn btn-small btn-primary" %>
+       <% end %>
+   </div>
+</div>
+
+
+
+<div id="left_panel">
+   <%=render 'layouts/left_panel'%>
+</div>
+<div id="right_panel">
+
+<div id="right_scroll">
+
+  <%= render 'flash' %>
+  <table class="places">
+    <tr>
+      <th>Callsign</th>
+      <th>Name</th>
+      <th>Registered</th>
+      <th>NZ QRP Member</th>
+      <% if current_user and (current_user.is_admin or current_user.group_admin) %>
+        <th>Email</th>
+        <th>Admin?</th>
+        <th>Group Admin?</th>
+        <th>Editor</th>
+        <th style="text-align:center">
+          <%=render :partial => 'filter',  :locals => {:filtername => "active", :formname => "/users"} %>
+         Active?
+        </th>
+      <% end %>
+    </tr>
+
+    <% if @users then @users.each do |user| %>
+      <tr>
+        <td>
+          <% if current_user and (current_user.is_admin or current_user.group_admin or current_user.id == user.id) %>
+            <span title="Click to edit"><%= link_to image_tag("/assets/pencil_edit.png", :class => 'dock-item'), '/users/'+user.callsign+'/edit?referring=index'%></span>
+          <% end %>
+          <%= link_to user.callsign.upcase, '/users/'+user.callsign, :id => 'user_link_'+user.id.to_s, :style => (if not user.activated then 'color:grey' else '' end) %>
+
+        </td>
+
+        <td><%= if user.firstname then user.firstname.capitalize else " " end+ " "+if user.lastname then user.lastname.capitalize else " " end%></td>
+        <td style="text-align:center"><%= check_box "user", "activated", {:checked => user.activated, :disabled => true} %></td>
+        <td style="text-align:center"><%= check_box "user", "membership_confirmed", {:checked => user.membership_confirmed, :disabled => true} %></td>
+        <% if current_user and (current_user.is_admin or current_user.group_admin) %>
+          <td><%=user.email%></td>
+          <td style="text-align:center"><%= check_box "user", "is_admin", {:checked => user.is_admin, :disabled => true} %></td>
+          <td style="text-align:center"><%= check_box "user", "group_admin", {:checked => user.group_admin, :disabled => true} %></td>
+          <td style="text-align:center"><%= check_box "user", "is_modifier", {:checked => user.is_modifier, :disabled => true} %></td>
+          <td style="text-align:center"><%= check_box "user", "is_active", {:checked => user.is_active, :disabled => true} %></td>
+        <% end %>
+      </tr>
+    <% end end %>
+  </table>
+</div>
+
+</div>

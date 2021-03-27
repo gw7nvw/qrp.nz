@@ -1,0 +1,25 @@
+ <div class="bordered_box">
+   <div class="box_header">
+      <p><div class="sectiontitle"><%=link_to @image.title, '/topics/'+@image.topic.url+'?title='+@image.title.html_safe.gsub("#","%23")%></div>
+      <p>
+      <%= link_to @image.updated_by_name, '/users/'+@image.updated_by_name %>
+      <%=if @image.updated_at > @image.created_at then " updated in " else " posted image in " end %>
+      <%=link_to @image.topic.name, '/topics/'+@image.topic.url%> on
+      <%=@image.updated_at.in_time_zone('Pacific/Auckland').strftime("%Y-%m-%d %H:%M")%>
+      <% if current_user and (current_user.id==@image.created_by_id or current_user.is_admin) then %>
+        <u><i><%=  link_to "Edit", '/images/'+@image.id.to_s+'/edit'%></i></u>
+        <u><i><%= link_to "Delete", '/images/'+@image.id.to_s+'/delete', confirm: "Delete post: Are you sure?" %></i></u>
+      <% end %>
+      <% if current_user and (current_user.is_admin or (@image.topic.is_public or (@image.topic.is_owners and current_user.id == @image.topic.owner_id))) %>
+        <u><i><%= link_to "Reply", '/posts/new/?topic_id='+@image.topic.url+'&title='+@image.title.html_safe %></i></u>
+      <% end %>
+
+      </p>
+   </div>
+   <div class="box_contents">
+      <div class="sectiontext"><%=raw @image.description%></div>
+   </div>
+   <div class="box_contents">
+      <%= link_to (image_tag @image.image.url(:original), style: 'max-height:480px;max-width:480px'), @image.image.url(:original), :target=>"_blank"%>
+   </div>
+ </div>

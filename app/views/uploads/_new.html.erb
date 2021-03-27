@@ -1,0 +1,43 @@
+<div id="actionbar" class="span12">
+   <div id="crumbs">
+     <%=link_to "Home", '/' %>
+     &nbsp;--&gt;&nbsp;
+     <%=  link_to  @contest.contest_series.name, '/contest_series/'+@contest.contest_series.id.to_s %>
+     &nbsp;--&gt;&nbsp;
+     <%=  link_to  @contest.name, '/contests/'+@contest.id.to_s %>
+     &nbsp;--&gt;&nbsp;
+     <b>Upload log</b>
+   </div>
+   <div id="controls">
+       <%=  link_to "Index", "/contests/"+@contest.id.to_s, class: "btn btn-small btn-primary"%>
+   </div>
+</div>
+
+
+<div id="left_panel">
+   <%=render 'layouts/left_panel'%>
+</div>
+<div id="right_panel">
+
+    <div class="sectiontitle">Upload log for <%=@contest.name%></div>
+    <div class="erow">
+    <p>Select your log and click the 'Upload' button. Logs can be .xls and .ods files and must use the approved log template.  Blank log templates can be downloaded from <%= if @contest.contest_series.log_url and @contest.contest_series.log_url!='' then link_to @contest.contest_series.log_url, @contest.contest_series.log_url else "[No log templates available at this time]" end %></p>
+    <%  @submit_button = "Upload log" %>
+    <%= render 'flash' %>
+
+    <div class="fullform">
+       <%= form_for @upload, :html => {:name => 'hutform'} do |f| %>
+        <%= render 'shared/error_messages' %>
+        <div id="right_scroll">
+
+          <div class="erow">
+             <div class="sectiontitle25">Filename:</div>
+          </div>
+          <%= f.file_field :doc %>
+          <%= hidden_field_tag :contest_id, @contest.id %>
+
+          <%= f.submit @submit_button, class: "btn btn-small btn-primary btn-hightlight" %>
+        </div>
+      <% end %>
+    </div>
+</div>

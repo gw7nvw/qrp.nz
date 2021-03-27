@@ -1,0 +1,112 @@
+<script type="text/javascript">
+//<![CDATA[
+   bkLib.onDomLoaded(startEdit);
+
+function startEdit() {
+  nicEditors.allTextAreas();
+  init();
+}
+
+</script>
+
+<div class="fullform">
+   <%= form_for(@topic) do |f| %>
+     <% if @parent_topic then %> 
+       <%=hidden_field_tag(:topic_id, @parent_topic.id)%>
+     <% end %> 
+     <div id="actionbar-form" class="span12">
+       <div id="crumbs">
+         <%=link_to "Home", '/'%>
+         &nbsp;--&gt;&nbsp;
+         <%=  link_to  "Topics", '/topics'%>
+         &nbsp;--&gt;&nbsp;
+         <%if @topic.id%>
+            <b><%=link_to @topic.name, '/topics/'+@topic.url%></b>
+            &nbsp;--&gt;&nbsp;
+            <b>Edit</b>
+         <% else %>
+            <b>New</b>
+         <% end %>
+
+       </div>
+
+       <div id="controls">
+          <%= f.submit @submit_button, class: "btn btn-small btn-primary btn-highlight" %>
+          <% if @topic.id %><% if params[:referring]=='index'%>
+            <%=  link_to "Cancel", '/topics', class: "btn btn-small btn-primary"%>
+          <% else %>
+            <%=  link_to "Cancel", '/topics/'+@topic.url, class: "btn btn-small btn-primary"%>
+          <% end %> <% end %>
+
+          <%  if(@submit_button == "Save Changes" and (current_user.is_admin or current_user.id==@topic.owner_id)) %>
+            <%= f.submit "Delete Topic", confirm: "Delete entire topic: Are you sure?", class: "btn btn-small btn-primary", callsign: "delete", id:  "deletebutton" %>
+          <% end %>
+
+       </div>
+     </div>
+
+<div id="left_panel"  style="margin-top:0px !important">
+   <%=render 'layouts/left_panel'%>
+</div>
+<div id="right_panel"  style="margin-top:0px !important">
+
+     <%= render 'shared/error_messages' %>	
+
+     <div id="right_scroll">
+
+        <span>
+          <%=f.label :name %>
+          <%= f.text_field :name %>
+        </span>
+  
+        <span>
+          <%=f.label :owner_id, "Owner"%>
+          <% if current_user and current_user.is_admin then %>
+            <%= collection_select( :topic, :owner_id, User.all.order(:callsign), :id, :callsign, {}) %></td>
+          <% else %>
+            <%= collection_select( :topic, :owner_id, User.where(:id => current_user.id), :id, :callsign, {}) %></td>
+          <% end %>
+        </span>
+  
+        <%=f.label :desctiption%>
+          <div id="editPanel"></div>
+          <span id="descrSpan">
+            <%= f.text_area :description %>
+          </span>
+
+        <span>
+          <%= "Any user can post " %><br/>
+          <%= f.check_box :is_public%><br/><br/>
+        </span>
+
+        <span>
+          <%= "Only owner can post " %><br/>
+          <%= f.check_box :is_owners%><br/><br/>
+        </span>
+
+        <span>
+          <%= "Only visible to registered members " %><br/>
+          <%= f.check_box :is_members_only%><br/><br/>
+        </span>
+
+        <span>
+          <%= "Posts include a date, time field " %><br/>
+          <%= f.check_box :date_required%><br/><br/>
+        </span>
+        <span>
+          <%= "Posts include a duration field " %><br/>
+          <%= f.check_box :duration_required%><br/><br/>
+        </span>
+        <span>
+          <%= "Allow members to subscribe to mails from this topic " %><br/>
+          <%= f.check_box :allow_mail%><br/><br/>
+        </span>
+     </div>
+
+  <% end %>
+</div>
+</div>
+
+<script>
+  startEdit();
+</script>

@@ -1,0 +1,44 @@
+<div id="actionbar" class="span12">
+   <div id="crumbs">
+     <%=link_to "Home", '/' %>
+     &nbsp;--&gt;&nbsp;
+     <b>Contest</b>
+     </div>
+   <div id="controls">
+       <% if current_user and current_user.is_admin %>
+            <%=  link_to "Edit Table", '/contest_series/editgrid', class: "btn btn-small btn-primary"%>
+       <% end %>
+       <% if current_user and current_user.is_admin %>
+            <%=  link_to "Add contest_series", '/contest_series/new', class: "btn btn-small btn-primary"%>
+       <% end %>
+       <% if current_user  %>
+         <%=  link_to "Download", '/contest_series.csv', class: "btn btn-small btn-primary"%>
+       <% end %>
+   </div>
+</div>
+
+
+<div id="left_panel">
+   <%=render 'layouts/left_panel'%>
+</div>
+<div id="right_panel">
+<div id="right_scroll">
+  <%= render 'flash' %>
+  <div class="erow"><div class="sectiontitle_bold">Contest:</div></div>
+
+  <table class="places">
+    <% if @contest_series then @contest_series.each do |contest_series| %>
+      <tr>
+        <td>
+          <% if current_user and current_user.is_admin %>
+             <span title="Click to edit row"><%= link_to image_tag("/assets/pencil_edit.png", :class => 'dock-item'), '/contest_series/'+contest_series.id.to_s+'/edit?referring=index', id:  "editbutton", alt: "Edit"  %></span>
+          <% end %>
+          <%= link_to contest_series.name, '/contest_series/'+contest_series.id.to_s %>
+        </td>
+        <td>
+            <%= contest_series.start_date %> to <%= contest_series.end_date %>
+        </td>
+    <% end end %>
+  </table>
+</div>
+</div>

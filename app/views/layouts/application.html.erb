@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+<script>
+if( /Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent))
+{
+ var ismobile=true;
+} else {
+ var ismobile=false;
+}
+</script>
+
+    <title>QRP.NZ</title>
+    <% if @description and @description.length>0 %>
+    <meta name="description" content="<%=@description%>">
+    <% end %>
+    <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true %>
+    <%= stylesheet_link_tag "application", media: "all", "jquery-ui.mi" => true %>
+   <script src="/handsontable/node_modules/handsontable/dist/handsontable.full.min.js"></script>
+   <link href="/handsontable/node_modules/handsontable/dist/handsontable.full.min.css" rel="stylesheet" media="screen">
+
+    <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+
+    <%= csrf_meta_tags %>
+    <%= render 'layouts/shim' %> 
+    <meta name="google-site-verification" content="KIylIchG3986annyXGfxBNJ-qMOJCDG2tdcuUMFPoO0" />
+
+</head>
+<body>
+    <%= render 'layouts/header' %>
+    <div id="main_page" class="container-fluid">
+    <div class="row-fluid">
+
+    <div id="main_panel" class="span12">
+    <%=yield %>
+    </div> 
+    </div> 
+    </div>
+</body>
+</html>

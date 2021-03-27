@@ -1,0 +1,56 @@
+<script>
+$(function () {
+  $('#right_panel .pagination a').on('click', function () {
+    $.getScript(this.href);
+    return false;
+  });
+});
+
+</script>
+
+<div id="actionbar" class="span12">
+   <div id="crumbs">
+     <%=link_to "Home", '/'%>
+     &nbsp;--&gt;&nbsp;
+     <b>Topics</b>
+   </div>
+   <div id="controls">
+       <% if current_user and current_user.is_modifier %>
+          <%=  link_to "Add Topic", '/topics/new', class: "btn btn-small btn-primary" %>
+       <% end %>
+   </div>
+</div>
+<div id="left_panel">
+   <%=render 'layouts/left_panel'%>
+</div>
+<div id="right_panel">
+
+<div id="right_scroll">
+
+  <% if @topics %>
+    <div class="name_pagination"> <%= will_paginate(@topics) %></div>
+    <% count=0%>
+    <% @topics.each do |topic| %>
+       <div class="erow"><div class="sectiontitle">
+         <%= link_to topic.name, '/topics/'+topic.url%>
+       </div></div>
+         <div class="erow"><div style="padding-left:10px;padding-top:6px"><%=raw topic.description%></div></div>
+
+         <% if (topic.items.count>0)  %>
+             <div style="padding-left:10px">
+               <% item=topic.items.first %>
+               <%#=render :partial => 'topics/item_details',  :locals => {:item => item, :topic=>@topic} %>
+             </div>
+         <% end %>
+
+         <div class="hrline">
+            <hr noshade size="4">
+         </div>
+
+       <% count+=1%>
+    <% end %>
+    <div class="erow"><div class="name_pagination"> <%= will_paginate(@topics) %></div></div>
+
+  <% end %>
+</div>
+</div>

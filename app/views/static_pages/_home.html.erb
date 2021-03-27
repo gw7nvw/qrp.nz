@@ -1,0 +1,35 @@
+<div id="actionbar" class="span12">
+   <div id="crumbs">
+     <b>Home</b>
+   </div>
+   <div id="controls">
+   </div>
+</div>
+
+<div id="left_panel">
+   <%=render 'layouts/left_panel'%>
+</div>
+<div id="right_panel">
+  <div id="right_scroll">
+      <%= render 'flash' %>
+        <div style="background-image: url('assets/hota-logo4.JPG'); background-size: cover;padding-bottom: 10px">
+
+          <h1 style="color:#fff;">QRP.NZ</h1>
+          <h2 style="color:#fff;opacity:0.5;text-align:center">To encourage and share the use of
+QRP (low power) operation, equipment, antenna
+ideas and information</h2>
+        </div>
+    <div class="hrline">
+       <hr noshade size="4">
+    </div>
+
+    <h2>Latest activity</h2>
+    <% @items.each do |item| %>
+       <% if not item.item_type == "topic" then %>
+         <%=render :partial => 'topics/item_details',  :locals => {:item => item} %> 
+       <% end %>
+    <% end%>
+  </div>
+</div>
+
+

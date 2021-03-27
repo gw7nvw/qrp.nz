@@ -1,0 +1,95 @@
+<div id="actionbar" class="span12">
+   <div id="crumbs">
+     <%=link_to "Home", '/'%>
+     &nbsp;--&gt;&nbsp;
+     <%=  link_to  "Topics", '/topics'%>
+     &nbsp;--&gt;&nbsp;
+     <% if params[:title] then %>
+       <b><%= link_to @topic.name, @topic.url %></b>
+       &nbsp;--&gt;&nbsp;
+       <b>Subject: <%=params[:title]%></b>
+     <% else %>
+       <b><%= @topic.name %></b>
+     <% end %>  
+   </div>
+   <div id="controls">
+       <% if current_user and (current_user.is_admin or (@topic.is_public or (@topic.is_owners and current_user.id == @topic.owner_id))) %>
+            <%=  link_to "New post", '/posts/new/?topic_id='+@topic.url, class: "btn btn-small btn-primary"%>
+            <% if current_user and (current_user.is_admin or (@topic.is_owners and current_user.id == @topic.owner_id)) %>
+              <%=  link_to "New sub-topic", '/topics/new/?topic_id='+@topic.url, class: "btn btn-small btn-primary"%>
+            <% end %>
+       <% end %>
+       <% if current_user and (current_user.is_admin or (current_user.id == @topic.owner_id)) %>
+            <%=  link_to "Edit Topic", '/topics/'+@topic.url+'/edit', class: "btn btn-small btn-primary"%>
+       <% end %>
+       <%=  link_to "Index", "/topics", class: "btn btn-small btn-primary"%>
+   </div>
+</div>
+
+<div id="left_panel">
+   <%=render 'layouts/left_panel'%>
+</div>
+<div id="right_panel">
+
+<div id="right_scroll">
+   <%= render 'flash' %>
+
+<% if params[:title] then %>
+   <div class="sectiontitle" id="page_title">
+     <%=  link_to @topic.name, '/topics/'+@topic.url %> 
+     &nbsp;--&gt;&nbsp;
+     Subject: <%=params[:title]%>
+     <br/>
+     <br/>
+   </div>
+
+<% else %>
+   <div class="sectiontitle" id="page_title">
+     <%=  link_to @topic.name, '/topics/'+@topic.url %> <br/>
+     <br/>
+   </div>
+
+   <div class="erow" id="description">
+      <%= raw (@topic.description).gsub(/(?<=<style type=\"text\/css\">).+(?=<\/style>)/m,'') %>
+   </div>
+  
+   <div class="erow" id="description">
+      <p><i><br/><%=if @watch_count==nil then "No" end %><%=@watch_count.to_s+" users are watching this topic"%></i></p>
+   </div>
+
+   <div class="erow">
+      <div class="hrline">
+         <hr noshade size="4">
+      </div>
+   </div>
+
+   <div class="erow"><i>
+   <% if @topic.is_public then  %>
+      Public topic open to all users.
+   <% elsif @topic.is_owners then  %>
+      Private topic. Only <%=@topic.owner_callsign%> can post to this topic.  
+   <% else %>
+      News feed run by the site administrator(s).
+   <% end %>
+   <% if @topic.is_members_only then %>
+      You must be a registered member to view posts to this topic.
+   <% end %>
+   </i></div>
+
+   <div class="erow">
+      <div class="hrline">
+         <hr noshade size="4">
+      </div>
+   </div>
+<% end %>
+  <h2>Latest posts</h2>
+<% if (@topic.is_members_only and current_user) or !@topic.is_members_only then %>
+  <% @items.each do |item| %>
+    <%=render :partial => 'topics/item_details',  :locals => {:item => item, :topic=>@topic} %>
+
+  <% end %>
+<% else %>
+  <div style="color:red"><i>Please <%=link_to "sign in", signin_path%> or <%=link_to "sign up", signup_path %> to view posts in this topic</i></div>
+<% end %>`
+</div>
+</div>
