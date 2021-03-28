@@ -8,9 +8,12 @@ New <%=@item.item_type%> on QRP.NZ in the topic "<%=@item.topic.name%>"
 
 Subject: <%=@item.end_item.title%>
 
-<% if @item.item_type=="post" and @item.end_item.referenced_date then %>Date/time: <%=@item.end_item.topic.name%> on/from <%=@item.end_item.referenced_date.strftime("%Y-%m-%d")%> <%=if @item.end_item.referenced_time then @item.end_item.referenced_time.strftime("%H:%M") end%><%if @item.end_item.duration then%> for <%=(@item.end_item.duration||1).to_s%> day(s)<%end%>
+<% if @item.item_type=="post" and @item.end_item.callsign then%>Operating Callsign: <%=@item.end_item.callsign%>
+<% end %><% if @item.item_type=="post" and @item.end_item.referenced_date then %>Date/time: <%=@item.end_item.topic.name%> on/from <%=@item.end_item.referenced_date.strftime("%Y-%m-%d")%> <%=if @item.end_item.referenced_time then @item.end_item.referenced_time.strftime("%H:%M") end%><%if @item.end_item.duration then%> for <%=(@item.end_item.duration||1).to_s%> day(s)<%end%>
+<% end %> <% if @item.item_type=="post" and @item.end_item.site then%><%=@item.end_item.site%>
+<%end%><%if (@item.end_item.freq and @item.end_item.freq.length>0) or (@item.end_item.mode and @item.end_item.mode.length>0) then%>Freq: <%= @item.end_item.freq%> - <%= @item.end_item.mode%>
+<%end%>
 
-<% end %>
 <%=convert_to_text(@item.end_item.description.gsub("<div>","").gsub("</div>","<br>"))%>
       <% if @item.item_type=="post" and @item.end_item.files %>
 ===
@@ -19,6 +22,9 @@ Subject: <%=@item.end_item.title%>
           Download: <%="https://qrp.nz"+uf.image.url %>
         <% end %>
       <% end %>
+
+===
+
 
 ===
 

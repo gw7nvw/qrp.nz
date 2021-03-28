@@ -15,11 +15,15 @@
         <%= link_to "Reply", '/posts/new/?topic_id='+@post.topic.url+'&title='+@post.title.html_safe, class: "link_to" %>
       <% end %>
       </p>
-      <% if @post.referenced_date then %>
+      <% if @post.referenced_date or @post.callsign then %>
         <p>
-          <b><%=@post.topic.name%> on/from <%=@post.referenced_date.strftime("%Y-%m-%d")%> <%=if @post.referenced_time then @post.referenced_time.strftime("%H:%M") end%><% if @post.duration then%> for <%=(@post.duration||1).to_s%> day(s)<%end%></b>
+          <b><%=if @post.callsign then @post.callsign+" " end%><%=@post.topic.name%><%if @post.referenced_date then %> on/from <%=@post.referenced_date.strftime("%Y-%m-%d")%> <%=if @post.referenced_time then @post.referenced_time.strftime("%H:%M") end%><%end%><% if @post.duration then%> for <%=(@post.duration||1).to_s%> day(s)<%end%></b>
         </p>
       <% end %>
+      <% if @post.site and @post.site.length>0 then %>
+        <p><%=@post.site%></p>
+      <% end %>
+      <%if (@post.freq and @post.freq.length>0) or (@post.mode and @post.mode.length>0) then%><p><%=@post.freq%> - <%=@post.mode%></p><% end %> 
    </div>
    <div class="box_contents">
       <div class="sectiontext"><%=raw (@post.description).gsub(/(?<=<style type=\"text\/css\">).+(?=<\/style>)/m,'')%></div>

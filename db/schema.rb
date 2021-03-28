@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210321030018) do
+ActiveRecord::Schema.define(version: 20210328074356) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -183,6 +183,19 @@ ActiveRecord::Schema.define(version: 20210321030018) do
     t.datetime "referenced_date"
     t.datetime "referenced_time"
     t.integer  "duration"
+    t.string   "site"
+    t.string   "code"
+    t.string   "mode"
+    t.string   "freq"
+    t.boolean  "is_hut"
+    t.boolean  "is_park"
+    t.boolean  "is_island"
+    t.boolean  "is_summit"
+    t.string   "hut"
+    t.string   "park"
+    t.string   "island"
+    t.string   "summit"
+    t.string   "callsign"
   end
 
   create_table "qrpnzmembers", force: true do |t|
@@ -215,6 +228,8 @@ ActiveRecord::Schema.define(version: 20210321030018) do
     t.boolean  "date_required"
     t.boolean  "allow_mail"
     t.boolean  "duration_required"
+    t.boolean  "is_alert"
+    t.boolean  "is_spot"
   end
 
   create_table "uploadedfiles", force: true do |t|

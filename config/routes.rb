@@ -29,6 +29,10 @@ resources :uploadedfiles, path: "files"
  get 'uploadedfiles/:id/delete', to: 'files#delete'
 
   match '/sessions', to: 'static_pages#home',    via:'get'
+  match '/queries/hut', to: 'queries#hut',    via:'get'
+  match '/queries/park', to: 'queries#park',    via:'get'
+  match '/queries/island', to: 'queries#island',    via:'get'
+  match '/queries/summit', to: 'queries#summit',    via:'get'
   match '/signin',  to: 'sessions#new',         via: 'get'
   match '/signup',  to: 'users#new',         via: 'get'
   match '/signout', to: 'sessions#destroy',     via: 'delete'

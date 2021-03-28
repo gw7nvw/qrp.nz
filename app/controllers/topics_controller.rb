@@ -132,7 +132,7 @@ before_action :signed_in_user, only: [:destroy, :create, :update]
 
   private
   def topic_params
-    params.require(:topic).permit(:name, :description, :owner_id, :is_owners, :is_public, :is_members_only, :date_required, :duration_required, :allow_mail)
+    params.require(:topic).permit(:name, :description, :owner_id, :is_owners, :is_public, :is_members_only, :date_required, :duration_required, :allow_mail, :is_spot, :is_alert)
   end
 
 end

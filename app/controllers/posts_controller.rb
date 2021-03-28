@@ -24,6 +24,10 @@ end
 def new
     @post=Post.new
     @topic=Topic.find_by_id(params[:topic_id])
+    t=Time.now.in_time_zone("Pacific/Auckland").strftime('%H:%M')
+    d=Time.now.in_time_zone("Pacific/Auckland").strftime('%Y-%m-%d') 
+    if @topic.is_spot then @post.referenced_date=d end
+    if @topic.is_spot then @post.referenced_time=t end
     if params[:title] then @post.title=params[:title] end
     if !@topic then 
       redirect_to '/'
@@ -94,6 +98,11 @@ def update
          end
        else
          @post.assign_attributes(post_params)
+         @post.site=""
+         if @post.hut and @post.hut.length>0 then @post.is_hut=true; @post.site+="[Hut: "+@post.hut+"] " else @post.is_hut=false end
+         if @post.park and @post.park.length>0 then @post.is_park=true; @post.site+="[Park: "+@post.park+"] "  else @post.is_park=false end
+         if @post.island and @post.island.length>0 then @post.is_island=true; @post.site+="[Island: "+@post.island+"] " else @post.is_island=false end
+         if @post.summit and @post.summit.length>0 then @post.is_summit=true; @post.site+="[Summit: "+@post.summit+"] " else @post.is_summit=false end
          @post.updated_by_id=current_user.id
          if @post.save then
            isimage=@post.is_image
@@ -154,6 +163,11 @@ def create
     @topic=Topic.find_by_id(params[:topic_id])
     if signed_in? and @topic and (@topic.is_public or current_user.is_admin or (@topic.owner_id==current_user.id and @topic.is_owners)) then
       @post=Post.new(post_params)
+      @post.site=""
+      if @post.hut and @post.hut.length>0 then @post.is_hut=true; @post.site+="[Hut: "+@post.hut+"] " else @post.is_hut=false end
+      if @post.park and @post.park.length>0 then @post.is_park=true; @post.site+="[Park: "+@post.park+"] "  else @post.is_park=false end
+      if @post.island and @post.island.length>0 then @post.is_island=true; @post.site+="[Island: "+@post.island+"] " else @post.is_island=false end
+      if @post.summit and @post.summit.length>0 then @post.is_summit=true; @post.site+="[Summit: "+@post.summit+"] " else @post.is_summit=false end
       @post.created_by_id = current_user.id #current_user.id
       @post.updated_by_id = current_user.id #current_user.id
       @topic.last_updated = Time.now
@@ -223,7 +237,7 @@ end
 
   private
   def post_params
-    params.require(:post).permit(:title, :description, :image, :do_not_publish, :referenced_date, :referenced_time, :duration)
+    params.require(:post).permit(:title, :description, :image, :do_not_publish, :referenced_date, :referenced_time, :duration, :is_hut, :is_park, :is_island,:is_summit, :site, :freq, :mode, :hut, :park, :island, :summit, :callsign)
   end
 
 end

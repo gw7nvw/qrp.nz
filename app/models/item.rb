@@ -69,15 +69,15 @@ end
 
 # Sends email
 def send_emails
-if self.topic_id then
-if ENV["RAILS_ENV"] == "production" then
-    subs=UserTopicLink.where(:topic_id => self.topic_id)
-    subs.each do |sub|
-      @user=User.find_by_id(sub.user_id)
-      UserMailer.subscriber_mail(self,@user).deliver
+  if self.topic_id then
+    if ENV["RAILS_ENV"] == "production" then
+      subs=UserTopicLink.where(:topic_id => self.topic_id)
+      subs.each do |sub|
+        @user=User.find_by_id(sub.user_id)
+        UserMailer.subscriber_mail(self,@user).deliver
+      end
     end
-end
-end
+  end
 end
 
 end

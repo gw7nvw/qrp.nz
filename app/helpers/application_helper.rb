@@ -15,24 +15,10 @@ module ApplicationHelper
 
     txt = html
 
-    # strip text ignored html. Useful for removing
-    # headers and footers that aren't needed in the
-    # text version
     txt.gsub!(/<!-- start text\/html -->.*?<!-- end text\/html -->/m, '')
 
-    # replace images with their alt attributes
-    # for img tags with "" for attribute quotes
-    # with or without closing tag
-    # eg. the following formats:
-    # <img alt="" />
-    # <img alt="">
     txt.gsub!(/<img.+?alt=\"([^\"]*)\"[^>]*\>/i, '\1')
 
-    # for img tags with '' for attribute quotes
-    # with or without closing tag
-    # eg. the following formats:
-    # <img alt='' />
-    # <img alt=''>
     txt.gsub!(/<img.+?alt=\'([^\']*)\'[^>]*\>/i, '\1')
 
     # links

@@ -1,12 +1,10 @@
 <script type="text/javascript">
-//<![CDATA[
    bkLib.onDomLoaded(startEdit);
 
 function startEdit() {
   nicEditors.allTextAreas();
   init();
 }
-
 </script>
 
 <div class="fullform">
@@ -57,21 +55,54 @@ function startEdit() {
        <%= render 'shared/error_messages' %>	
 
        <div id="right_scroll">
- 
-         <% if @topic.date_required %>
-         <span>
-           <%=@topic.name%> on/from:
-           <%=   f.date_field :referenced_date %>
-           <%=   f.time_field :referenced_time %>
-         </span>
-         <% end %>
-         <% if @topic.duration_required %>
-         <span>
-           <%=@topic.name%> trip duration (days):
-           <%=   f.text_field :duration %>
-         </span>
-         <% end %>
 
+         <% if @topic.is_spot or @topic.is_alert then %>
+           <b><%=@topic.name%></b><br>
+           <table>
+             <% if @topic.is_spot then %>
+               <tr>
+                 <td>Operating callsign:</td>
+                 <td style="padding:0px; margin:0px;" colspan=3><%=f.text_field :callsign, :style =>"padding:0px; margin:0px;" %></td>
+               </tr>
+             <% end %>
+             <tr>
+                   <td>On/from:</td>
+                   <td style="padding:0px; margin:0px;"><%=   f.date_field :referenced_date, :style =>"padding:0px; margin:0px;" %></td><td style="padding:0px; margin:0px;"><%=   f.time_field :referenced_time, :style =>"padding:0px; margin:0px;" %></td>
+           <% if @topic.is_alert then %>
+               <td>For (days):</td><td style="padding:0px; margin:0px;"> <%=   f.text_field :duration, :style =>"padding:0px; margin:0px;" %></td>
+           <% else %>
+             <td colspan=2></td>
+           <% end %>
+             </tr>
+
+           <tr>
+             <td>Hut:</td>
+             <td style="padding:0px; margin:0px;">
+               <div id="huts"><input id="post_hut" name="post[hut]" style="padding:0px; margin:0px;" type="text" class="typeahead" placeholder="Hut" value='<%=@post.hut%>'></div>
+             </td>
+             <td>Park:</td>
+             <td style="padding:0px; margin:0px;" colspan=2>
+               <div id="parks"><input id="post_park" name="post[park]" style="padding:0px; margin:0px;" type="text" class="typeahead" placeholder="Park" value='<%=@post.park%>'></div>
+             </td>
+           </tr>
+           <tr>
+             <td>Island:</td>
+             <td style="padding:0px; margin:0px;">
+               <div id="islands"><input id="post_island" name="post[island]" style="padding:0px; margin:0px;" type="text" class="typeahead" placeholder="Island" value='<%=@post.island%>'></div>
+             </td>
+             <td>Summit:</td>
+             <td style="padding:0px; margin:0px;" colspan=2>
+               <div id="summits"><input id="post_summit" name="post[summit]" style="padding:0px; margin:0px;" type="text" class="typeahead" placeholder="Summit" value='<%=@post.summit%>'></div>
+             </td>
+           </tr>
+           <tr>
+             <td>Freq(s):</td>
+             <td style="padding:0px; margin:0px;" ><%=   f.text_field :freq, :style =>"padding:0px; margin:0px;" %></td>
+             <td>Mode(s):</td>
+             <td style="padding:0px; margin:0px;" colspan=2><%=   f.text_field :mode, :style =>"padding:0px; margin:0px;" %></td>
+           </tr>
+         </table>
+         <% end %>
          <span>
            <%=f.label :title %>
            <%= f.text_field :title %>
@@ -126,6 +157,75 @@ function startEdit() {
   <% end %>
 </div>
 <script>
+var huts = new Bloodhound({
+  datumTokenizer: Bloodhound.tokenizers.whitespace,
+  queryTokenizer: Bloodhound.tokenizers.whitespace,
+  remote: {
+    url: '/queries/hut?query=%QUERY',
+    wildcard: '%QUERY'
+  }
+});
+
+  huts.clearPrefetchCache();
+  huts.initialize();
+
+  $('#huts .typeahead').typeahead(null, {
+    name: 'huts',
+    source: huts
+  });
+
+
+var parks = new Bloodhound({
+  datumTokenizer: Bloodhound.tokenizers.whitespace,
+  queryTokenizer: Bloodhound.tokenizers.whitespace,
+  remote: {
+    url: '/queries/park?query=%QUERY',
+    wildcard: '%QUERY'
+  }
+});
+
+  parks.clearPrefetchCache();
+  parks.initialize();
+
+  $('#parks .typeahead').typeahead(null, {
+    name: 'parks',
+    source: parks
+  });
+
+var islands = new Bloodhound({
+  datumTokenizer: Bloodhound.tokenizers.whitespace,
+  queryTokenizer: Bloodhound.tokenizers.whitespace,
+  remote: {
+    url: '/queries/island?query=%QUERY',
+    wildcard: '%QUERY'
+  }
+});
+
+  islands.clearPrefetchCache();
+  islands.initialize();
+
+  $('#islands .typeahead').typeahead(null, {
+    name: 'islands',
+    source: islands
+  });
+
+var summits = new Bloodhound({
+  datumTokenizer: Bloodhound.tokenizers.whitespace,
+  queryTokenizer: Bloodhound.tokenizers.whitespace,
+  remote: {
+    url: '/queries/summit?query=%QUERY',
+    wildcard: '%QUERY'
+  }
+});
+
+  summits.clearPrefetchCache();
+  summits.initialize();
+
+  $('#summits .typeahead').typeahead(null, {
+    name: 'summits',
+    source: summits
+  });
+
   startEdit();
 </script>
 

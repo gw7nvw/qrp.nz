@@ -90,12 +90,12 @@ function startEdit() {
         </span>
 
         <span>
-          <%= "Posts include a date, time field " %><br/>
-          <%= f.check_box :date_required%><br/><br/>
+          <%= "Topic for alerts?"%>
+          <%= f.check_box :is_alert%><br/><br/>
         </span>
         <span>
-          <%= "Posts include a duration field " %><br/>
-          <%= f.check_box :duration_required%><br/><br/>
+          <%= "Topic for spots?"%>
+          <%= f.check_box :is_spot%><br/><br/>
         </span>
         <span>
           <%= "Allow members to subscribe to mails from this topic " %><br/>
