@@ -65,15 +65,14 @@ function startEdit() {
                  <td style="padding:0px; margin:0px;" colspan=3><%=f.text_field :callsign, :style =>"padding:0px; margin:0px;" %></td>
                </tr>
              <% end %>
-             <tr>
-                   <td>On/from:</td>
+             <% if @topic.is_alert then %>
+
+               <tr>
+                   <td>On air from:</td>
                    <td style="padding:0px; margin:0px;"><%=   f.date_field :referenced_date, :style =>"padding:0px; margin:0px;" %></td><td style="padding:0px; margin:0px;"><%=   f.time_field :referenced_time, :style =>"padding:0px; margin:0px;" %></td>
-           <% if @topic.is_alert then %>
-               <td>For (days):</td><td style="padding:0px; margin:0px;"> <%=   f.text_field :duration, :style =>"padding:0px; margin:0px;" %></td>
-           <% else %>
-             <td colspan=2></td>
-           <% end %>
+                   <td>Trip length (days):</td><td style="padding:0px; margin:0px;"> <%=   f.text_field :duration, :style =>"padding:0px; margin:0px;" %></td>
              </tr>
+           <% end %>
 
            <tr>
              <td>Hut:</td>
@@ -96,7 +95,7 @@ function startEdit() {
              </td>
            </tr>
            <tr>
-             <td>Freq(s):</td>
+             <td>Freqs (MHz):</td>
              <td style="padding:0px; margin:0px;" ><%=   f.text_field :freq, :style =>"padding:0px; margin:0px;" %></td>
              <td>Mode(s):</td>
              <td style="padding:0px; margin:0px;" colspan=2><%=   f.text_field :mode, :style =>"padding:0px; margin:0px;" %></td>
@@ -113,12 +112,19 @@ function startEdit() {
          <span id="descrSpan">
            <%= f.text_area :description %>
          </span>
+      <% if @topic.is_spot or @topic.is_alert then %>
       <span>
         Publish on Parks n Peaks
         <input id="pnp" name="pnp" type="checkbox" checked="checked">
       </span>
+      <%end%>
 
    <%  if(@submit_button != "Save Changes" and current_user and current_user.is_admin) %>
+      <span>
+      DEBUG PnP
+      <input id="debug" name="debug" type="checkbox">
+      </span>
+
          <div class="erow">
            <%=f.label "Check to supress emails of this post" %> 
            <%= f.check_box :do_not_publish %>
